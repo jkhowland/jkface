@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JK Bold Face — Connect Google Calendar</title>
+<style>
+  body { margin: 0; font-family: -apple-system, 'Segoe UI', Roboto, sans-serif;
+         background: #16181c; color: #e8eaed; display: flex; min-height: 100vh;
+         align-items: center; justify-content: center; }
+  .card { max-width: 420px; padding: 40px 32px; text-align: center; }
+  h1 { font-size: 22px; margin: 0 0 8px; }
+  h1 span { color: #c3f024; }
+  p { color: #9aa0a6; font-size: 15px; line-height: 1.5; }
+  a.btn { display: inline-block; margin-top: 16px; background: #c3f024; color: #16181c;
+          font-weight: 600; padding: 14px 28px; border-radius: 10px; text-decoration: none; }
+  #code { font-family: ui-monospace, Menlo, monospace; font-size: 14px; background: #24262b;
+          border-radius: 10px; padding: 16px; word-break: break-all; margin-top: 16px;
+          user-select: all; cursor: pointer; display: none; }
+  #copied { color: #c3f024; font-size: 13px; visibility: hidden; margin-top: 8px; }
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>JK <span>Bold</span> Face</h1>
+  <div id="start">
+    <p>Connect your Google Calendar to show your next meeting on the watch face.</p>
+    <a class="btn" id="signin" href="#">Sign in with Google</a>
+  </div>
+  <div id="done" style="display:none">
+    <p>Tap the code to copy it, then paste it into the watch face settings
+       (<b>Connect&nbsp;IQ app &rarr; JK Face &rarr; Settings &rarr; Google sign-in code</b>).</p>
+    <div id="code"></div>
+    <div id="copied">Copied</div>
+  </div>
+</div>
+<script>
+  var CLIENT_ID = "PASTE_CLIENT_ID";
+  var REDIRECT = location.origin + location.pathname;
+
+  var params = new URLSearchParams(location.search);
+  var code = params.get("code");
+  if (code) {
+    document.getElementById("start").style.display = "none";
+    document.getElementById("done").style.display = "block";
+    var el = document.getElementById("code");
+    el.style.display = "block";
+    el.textContent = code;
+    el.onclick = function () {
+      navigator.clipboard.writeText(code);
+      document.getElementById("copied").style.visibility = "visible";
+    };
+  } else {
+    document.getElementById("signin").href =
+      "https://accounts.google.com/o/oauth2/v2/auth" +
+      "?client_id=" + encodeURIComponent(CLIENT_ID) +
+      "&redirect_uri=" + encodeURIComponent(REDIRECT) +
+      "&response_type=code" +
+      "&scope=" + encodeURIComponent("https://www.googleapis.com/auth/calendar.readonly") +
+      "&access_type=offline&prompt=consent";
+  }
+</script>
+</body>
+</html>
